@@ -1,0 +1,5 @@
+node_modules
+server/connect.js
+videos
+save_imgs
+*.pt
