@@ -1,7 +1,15 @@
+.container {
+  display: flex;
+}
+
 .map {
-  width: 99%;
+  width: 65%;
   height: 75vh;
   margin: auto;
   border-radius: 10px;
   border: 1px solid black;
+}
+
+.webcam {
+  width: 100%;
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Home.module.css';
 import Axios from 'axios';
+import WebcamCapture from './WebcamCapture';
 
 const { kakao } = window;
 
@@ -115,6 +116,18 @@ function Home() {
             count++;
             // 여기에 핵심 코드를 넣으면 되겠다
           }
+
+          if (count > 0) {
+            // 음성 합성을 위한 인스턴스 생성
+            const speechSynthesis = window.speechSynthesis;
+
+            // 음성 합성을 위한 메시지 생성
+            const message = new SpeechSynthesisUtterance();
+            message.text = '포트홀 주의하세요!';
+
+            // 음성 합성 시작
+            speechSynthesis.speak(message);
+          }
         });
         if (count) {
           console.log(`주변에 ${count}개의 포트홀!`);
@@ -124,15 +137,21 @@ function Home() {
   }, []);
 
   return (
-    <div>
+    <div className={styles.container}>
       <section id="map" className={styles.map}></section>
-      <button onClick={onClick}>click</button>
+      <WebcamCapture />
+      {/* <button onClick={onClick}>click</button> */}
       <dialog>
         <img
-          src="http://localhost:5000/save_imgs/2023-04-15/2.jpg"
+          src={
+            selected.id
+              ? `http://localhost:5000/save_imgs/${selected.date}/${selected.id}.jpg `
+              : null
+          }
           alt="pothole"
+          style={{ width: '200px' }}
         />
-        <span>일시: {selected.date}</span>
+        <span>일시: {selected.id ? selected.date : null}</span>
         <button>신고하기</button>
       </dialog>
     </div>
