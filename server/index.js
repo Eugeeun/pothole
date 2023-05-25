@@ -39,8 +39,15 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     return res.status(400).json({ error: '파일이 전송되지 않았습니다.' });
   }
 
+  // 파일이 정상적으로 저장되었을 경우
+  res.status(200).json({ message: '파일이 정상적으로 저장되었습니다.' });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is Listening on ${PORT}!!`);
+  // 'python yolov5/detect.py --weights best1.pt --conf 0.6 --source uploads/frame.jpg'; 나중엔 이거로 사용할 것
   const pythonScript =
-    'python yolov5/detect.py --weights best1.pt --conf 0.6 --source uploads/frame.jpg';
+    'python yolov5/detect.py --conf 0.4 --source uploads/frame.jpg';
 
   exec(pythonScript, (error, stdout, stderr) => {
     if (error) {
@@ -49,11 +56,4 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     }
     console.log(stdout);
   });
-
-  // 파일이 정상적으로 저장되었을 경우
-  res.status(200).json({ message: '파일이 정상적으로 저장되었습니다.' });
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is Listening on ${PORT}!!`);
 });

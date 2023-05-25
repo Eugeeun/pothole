@@ -18,6 +18,10 @@ const WebcamCapture = () => {
         console.error('웹캠 스트림을 받아오는 중 오류가 발생했습니다:', error);
       });
 
+    setInterval(() => {
+      handleCaptureFrame();
+    }, 1250);
+
     return () => {
       // 컴포넌트 언마운트 시 웹캠 스트림 해제
       if (videoRef.current) {
