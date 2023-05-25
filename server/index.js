@@ -1,7 +1,8 @@
 const express = require('express');
 const PORT = process.env.PORT || 5000;
 const { connect } = require('./connect');
-const fs = require('fs');
+const { exec } = require('child_process');
+const multer = require('multer');
 
 const app = express();
 app.use(express.json());
@@ -18,24 +19,39 @@ app.get('/api/potholes', (req, res) => {
   });
 });
 
-app.post('/api/upload', (req, res) => {
-  // FormData에서 이미지 파일을 받아서 서버에 저장합니다.
-  console.log(req.body);
-  // const imageFile = req.files.images;
-  // const filePath = `./uploads/${imageFile.name}`;
+// 파일 저장을 위한 multer 설정
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // 파일 저장 경로 설정
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    // 파일 이름 설정
+    cb(null, file.originalname);
+  },
+});
 
-  // imageFile.mv(filePath, (error) => {
-  //   if (error) {
-  //     console.error('프레임 저장 실패:', error);
-  //     return res.status(500).send('프레임 저장에 실패했습니다.');
-  //   }
+const upload = multer({ storage: storage });
 
-  //   console.log('프레임 저장 완료:', filePath);
+// 파일 업로드를 처리하는 라우트 핸들러
+app.post('/api/upload', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: '파일이 전송되지 않았습니다.' });
+  }
 
-  //   // 추가적인 작업을 수행할 수 있습니다.
+  const pythonScript =
+    'python yolov5/detect.py --weights best1.pt --conf 0.6 --source uploads/frame.jpg';
 
-  //   res.send('프레임이 성공적으로 전송되었습니다.');
-  // });
+  exec(pythonScript, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Python script execution error: ${error}`);
+      return;
+    }
+    console.log(stdout);
+  });
+
+  // 파일이 정상적으로 저장되었을 경우
+  res.status(200).json({ message: '파일이 정상적으로 저장되었습니다.' });
 });
 
 app.listen(PORT, () => {

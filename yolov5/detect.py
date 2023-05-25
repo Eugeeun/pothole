@@ -142,6 +142,7 @@ def run(
         # Process predictions
         for i, det in enumerate(pred):  # per image
             seen += 1
+            print(seen)
             if webcam:  # batch_size >= 1
                 p, im0, frame = path[i], im0s[i].copy(), dataset.count
                 s += f'{i}: '
@@ -181,7 +182,7 @@ def run(
                         label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
                         annotator.box_label(xyxy, label, color=colors(c, True))
 
-                    if(seen % 10 == 0 and names[c]=='pothole'):
+                    if(names[c]=='pothole'): #웹캠이 아니면 seen % 10 == 0 and 를 if문 안에 추가
                             print('포트홀 발견!')
 
                             # 폴더 경로 설정
